@@ -2,6 +2,7 @@ import { MenuNavLink } from '@/components/mainPageLink';
 import TxAnchor from '@/components/TxAnchor';
 import { useAdminPerms } from '@/hooks/auth';
 import { serverNameAtom, txConfigStateAtom } from '@/hooks/status';
+import { useContentRefresh } from '@/hooks/pages';
 import { cn } from '@/lib/utils';
 import { TxConfigState } from '@shared/enums';
 import { GlobalStatusType } from '@shared/socketioTypes';
@@ -31,6 +32,7 @@ function PendingServerConfigure({ txConfigState }: PendingServerConfigureProps) 
     const [currLocation] = useLocation();
     const [linkHref, setLinkHref] = useState('');
     const linkText = useRef('');
+    const refreshContent = useContentRefresh();
 
     //This effect is done to prevent the link from popping up in the delay between ui change
     // and the pendingStep state atom being updated from the socket.io event
@@ -64,9 +66,11 @@ function PendingServerConfigure({ txConfigState }: PendingServerConfigureProps) 
                 You need to configure your server to be able to start it.
             </p>
             {linkHref ? (
-                <TxAnchor href={linkHref} className="animate-toastbar-enter">
-                    {linkText.current}
-                </TxAnchor>
+                <span onClick={() => refreshContent()}>
+                    <TxAnchor href={linkHref} className="animate-toastbar-enter">
+                        {linkText.current}
+                    </TxAnchor>
+                </span>
             ) : (
                 <TxAnchor href="#" className="animate-toastbar-leave pointer-events-none">
                     {linkText.current || <>&nbsp;</>}

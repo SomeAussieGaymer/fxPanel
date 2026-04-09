@@ -147,6 +147,9 @@ local function syncServerCtx()
         ServerCtxObj.tagDefinitions = {}
     end
 
+    -- Reports enabled flag
+    ServerCtxObj.reportsEnabled = GetConvarBool('txAdmin-reportsEnabled')
+
     DebugPrint('Updated ServerCtx.')
     GlobalState.txAdminServerCtx = ServerCtxObj
 

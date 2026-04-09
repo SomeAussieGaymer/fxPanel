@@ -50,6 +50,7 @@ const cardNamesMap = {
     discord: 'Discord',
     'game-menu': 'Game Menu',
     'game-notifications': 'Game Notifications',
+    'game-reports': 'Game Reports',
     'player-tags': 'Player Tags',
 } as const;
 const validCardIds = Object.keys(cardNamesMap) as [keyof typeof cardNamesMap];
@@ -101,6 +102,13 @@ export default async function SaveSettingsConfigs(ctx: AuthedCtx) {
     let handlerResp: CardHandlerSuccessResp | void = { processedConfig: inputConfig };
     try {
         if (cardId === 'general') {
+            //Only master admin can change allowSelfIdentifierEdit
+            if ((inputConfig as any).general?.allowSelfIdentifierEdit !== undefined && !ctx.admin.isMaster) {
+                return sendTypedResp({
+                    type: 'error',
+                    msg: 'Only the master admin can change the "Allow Self Identifier Edit" setting.',
+                });
+            }
             handlerResp = await handleGeneralCard(inputConfig, sendTypedResp);
         } else if (cardId === 'fxserver') {
             handlerResp = await handleFxserverCard(inputConfig, sendTypedResp);

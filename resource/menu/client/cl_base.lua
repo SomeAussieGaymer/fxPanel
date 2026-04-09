@@ -56,6 +56,66 @@ end
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
 
+-- Shortcut commands for moderation actions
+local actionPermMap = {
+    ban = 'players.ban',
+    kick = 'players.kick',
+    warn = 'players.warn',
+    dm = 'players.direct_message',
+    heal = 'players.heal',
+    teleport = 'players.teleport',
+    spectate = 'players.spectate',
+    freeze = 'players.freeze',
+    troll = 'players.troll',
+    announce = 'announcement',
+    vehicle = 'menu.vehicle',
+    clear_area = 'menu.clear_area',
+    viewids = 'menu.viewids',
+    playermode = 'players.playermode',
+    whitelist = 'players.whitelist',
+    resources = 'commands.resources',
+}
+local function makeActionCommand(action)
+    return function(_, args)
+        if not checkMenuAccessible() then
+            return
+        end
+        local requiredPerm = actionPermMap[action]
+        if requiredPerm and not DoesPlayerHavePerm(menuPermissions, requiredPerm) then
+            SendSnackbarMessage('error', 'You do not have permission to ' .. action .. ' players.', false)
+            return
+        end
+        if #args < 1 then
+            SendSnackbarMessage('error', 'Usage: /' .. action .. ' [playerID]', false)
+            return
+        end
+        local targetPlayer = table.concat(args, ' ')
+        toggleMenuVisibility(true)
+        SetNuiFocus(true, true)
+        SendMenuMessage('openPlayerModalAction', { target = targetPlayer, action = action })
+    end
+end
+RegisterCommand('ban', makeActionCommand('ban'))
+RegisterCommand('kick', makeActionCommand('kick'))
+RegisterCommand('warn', makeActionCommand('warn'))
+
+-- Announce command
+RegisterCommand('announce', function(_, args)
+    if not checkMenuAccessible() then
+        return
+    end
+    if not DoesPlayerHavePerm(menuPermissions, actionPermMap['announce']) then
+        SendSnackbarMessage('error', 'You do not have permission to send announcements.', false)
+        return
+    end
+    if #args < 1 then
+        SendSnackbarMessage('error', 'Usage: /announce [message]', false)
+        return
+    end
+    local message = table.concat(args, ' ')
+    TriggerServerEvent('txsv:req:sendAnnouncement', message)
+end)
+
 RegisterCommand('txAdmin:menu:openPlayersPage', function()
     if not checkMenuAccessible() then
         return
@@ -166,6 +226,30 @@ CreateThread(function()
         { { name = 'player ID', help = 'The server ID of the target player.' } }
     )
     TriggerEvent('chat:addSuggestion', '/tpm', 'Teleport to the waypoint set on the map.')
+    TriggerEvent(
+        'chat:addSuggestion',
+        '/ban',
+        'Open the ban modal for a player.',
+        { { name = 'player ID/name', help = 'The server ID or name of the target player.' } }
+    )
+    TriggerEvent(
+        'chat:addSuggestion',
+        '/kick',
+        'Open the kick dialog for a player.',
+        { { name = 'player ID/name', help = 'The server ID or name of the target player.' } }
+    )
+    TriggerEvent(
+        'chat:addSuggestion',
+        '/warn',
+        'Open the warn dialog for a player.',
+        { { name = 'player ID/name', help = 'The server ID or name of the target player.' } }
+    )
+    TriggerEvent(
+        'chat:addSuggestion',
+        '/announce',
+        'Send a server-wide announcement.',
+        { { name = 'message', help = 'The announcement message to broadcast.' } }
+    )
 end)
 
 -- Will toggle debug logging

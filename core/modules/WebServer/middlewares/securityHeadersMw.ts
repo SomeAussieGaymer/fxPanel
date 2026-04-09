@@ -41,7 +41,8 @@ const buildCSP = (isDev: boolean): string => {
     const trustedCDNs = ['https://cdnjs.cloudflare.com', 'https://unpkg.com', 'https://cdn.jsdelivr.net'];
     cspDirectives['script-src'].push(...trustedCDNs);
     cspDirectives['style-src'].push(...trustedCDNs);
-    cspDirectives['connect-src'].push(...trustedCDNs);
+    // Allow GitHub Raw for fetching txAdmin recipe index and custom recipe URLs
+    cspDirectives['connect-src'].push(...trustedCDNs, 'https://raw.githubusercontent.com');
     // Allow fonts from trusted CDNs (e.g. Monaco editor codicon from jsdelivr)
     cspDirectives['font-src'].push(...trustedCDNs);
     if (!isDev) {

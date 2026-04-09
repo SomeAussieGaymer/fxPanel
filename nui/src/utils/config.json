@@ -12,6 +12,7 @@
         "switchPageKey": "Tab",
         "txAdminVersion": "0.1.0-Beta",
         "alignRight": false,
-        "tagDefinitions": []
+        "tagDefinitions": [],
+        "reportsEnabled": true
     }
 }

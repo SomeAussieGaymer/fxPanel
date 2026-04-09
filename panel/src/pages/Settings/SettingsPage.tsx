@@ -24,6 +24,7 @@ import ConfigCardFxserver from './tabCards/fxserver';
 import ConfigCardGameMenu from './tabCards/gameMenu';
 import ConfigCardGameNotifications from './tabCards/gameNotifications';
 import ConfigCardGamePlayerTags from './tabCards/gamePlayerTags';
+import ConfigCardGameReports from './tabCards/gameReports';
 import ConfigCardGeneral from './tabCards/general';
 import ConfigCardWhitelist from './tabCards/whitelist';
 import SettingsCardTemplate from './tabCards/_template';
@@ -43,6 +44,7 @@ const settingsTabsBase = [
         cards: [
             { name: 'Menu', Component: ConfigCardGameMenu },
             { name: 'Notifications', Component: ConfigCardGameNotifications },
+            { name: 'Reports', Component: ConfigCardGameReports },
         ],
     },
     { name: 'Player Tags', Component: ConfigCardGamePlayerTags },

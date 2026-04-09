@@ -124,6 +124,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
             icon: txCore.cacheStore.getTyped('fxsRuntime:iconFilename', isString),
         },
         hideFxsUpdateNotification: txConfig.general.hideFxsUpdateNotification,
+        allowSelfIdentifierEdit: txConfig.general.allowSelfIdentifierEdit,
 
         //auth
         preAuth: authedAdmin && authedAdmin.getAuthData(),

@@ -51,7 +51,11 @@ local function prepareSpectatorPed(enabled)
     SetEntityVisible(playerPed, not enabled, 0)
 
     if enabled then
-        TaskLeaveAnyVehicle(playerPed, 0, 16)
+        if IS_REDM and IsPedOnMount(playerPed) then
+            ClearPedTasksImmediately(playerPed)
+        else
+            TaskLeaveAnyVehicle(playerPed, 0, 16)
+        end
     end
 end
 
