@@ -28,23 +28,38 @@ export default () => {
 
     // TTL Map wrapper for rate limiters — auto-evicts expired entries
     const createTtlMap = (ttlMs: number) => {
-        const store = new Map<string, { value: any; expires: number }>();
-        const map = {
-            get(key: string) { 
-                const entry = store.get(key);
-                if (!entry) return undefined;
-                if (Date.now() > entry.expires) { store.delete(key); return undefined; }
-                return entry.value;
-            },
-            set(key: string, value: any) { store.set(key, { value, expires: Date.now() + ttlMs }); },
-            has(key: string) { return map.get(key) !== undefined; },
-            delete(key: string) { return store.delete(key); },
+        const map = new Map<string, any>();
+        const expiry = new Map<string, number>();
+        const original = {
+            get: map.get.bind(map),
+            set: map.set.bind(map),
+            has: map.has.bind(map),
+            delete: map.delete.bind(map),
+        };
+        map.get = (key: string) => {
+            const exp = expiry.get(key);
+            if (exp !== undefined && Date.now() > exp) {
+                map.delete(key);
+                return undefined;
+            }
+            return original.get(key);
+        };
+        map.set = (key: string, value: any) => {
+            expiry.set(key, Date.now() + ttlMs);
+            return original.set(key, value);
+        };
+        map.has = (key: string) => {
+            return map.get(key) !== undefined;
+        };
+        map.delete = (key: string) => {
+            expiry.delete(key);
+            return original.delete(key);
         };
         // Sweep expired entries every 60 seconds
         setInterval(() => {
             const now = Date.now();
-            for (const [key, entry] of store) {
-                if (now > entry.expires) store.delete(key);
+            for (const [key, exp] of expiry) {
+                if (now > exp) map.delete(key);
             }
         }, 60_000).unref();
         return map;
@@ -219,6 +234,17 @@ export default () => {
     router.get('/reports/detail', apiAuthMw, readLimiter, routes.reports_detail);
     router.post('/reports/message', apiAuthMw, mutationLimiter, routes.reports_message);
     router.post('/reports/status', apiAuthMw, mutationLimiter, routes.reports_status);
+
+    //Addon routes
+    router.get('/addons/list', apiAuthMw, routes.addons_list);
+    router.get('/addons/panel-manifest', apiAuthMw, routes.addons_panelManifest);
+    router.get('/addons/nui-manifest', apiAuthMw, routes.addons_nuiManifest);
+    router.post('/addons/:addonId/approve', apiAuthMw, mutationLimiter, routes.addons_approve);
+    router.post('/addons/:addonId/revoke', apiAuthMw, mutationLimiter, routes.addons_revoke);
+    router.all('/addons/:addonId/api/(.*)', apiAuthMw, readLimiter, routes.addons_proxy);
+    //Addon static file serving (panel bundles & static assets)
+    router.get('/addons/:addonId/panel/(.*)', routes.addons_servePanelFile);
+    router.get('/addons/:addonId/static/(.*)', routes.addons_serveStaticFile);
 
     //Host routes
     router.get('/host/status', hostAuthMw, routes.host_status);

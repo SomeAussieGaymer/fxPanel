@@ -32,6 +32,7 @@ import CfgEditorPage from '@/pages/CfgEditorPage';
 import SetupPage from '@/pages/SetupPage';
 import DeployerPage from '@/pages/DeployerPage';
 import { useAdminPerms } from '@/hooks/auth';
+import { useAddonLoader, type AddonPageRoute } from '@/hooks/addons';
 import UnauthorizedPage from '@/pages/UnauthorizedPage';
 
 type RouteType = {
@@ -204,11 +205,31 @@ function Route(route: RouteType) {
     return <WouterRoute path={route.path}>{nodeToRender}</WouterRoute>;
 }
 
+function AddonRoute({ route }: { route: AddonPageRoute }) {
+    const { hasPerm } = useAdminPerms();
+    const setPageTitle = useSetPageTitle();
+    setPageTitle(route.title);
+    const nodeToRender =
+        route.permission && !hasPerm(route.permission) ? (
+            <UnauthorizedPage pageName={route.title} permission={route.permission} />
+        ) : (
+            <route.Component />
+        );
+    return <WouterRoute path={route.path}>{nodeToRender}</WouterRoute>;
+}
+
 export function MainRouterInner() {
+    const { pages: addonPages } = useAddonLoader();
+
     return (
         <Switch>
             {allRoutes.map((route) => (
                 <Route key={route.path} {...route} />
+            ))}
+
+            {/* Addon Routes */}
+            {addonPages.map((route) => (
+                <AddonRoute key={route.path} route={route} />
             ))}
 
             {/* Other Routes - they need to set the title manuually */}

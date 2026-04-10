@@ -31,6 +31,7 @@ import SettingsCardTemplate from './tabCards/_template';
 import SettingsCardBlank from './tabCards/_blank';
 import { PageHeader, PageHeaderChangelog } from '@/components/page-header';
 import { emsg } from '@shared/emsg';
+import AddonsContent from '@/pages/AddonsPage';
 
 //Tab configuration
 const settingsTabsBase = [
@@ -110,6 +111,7 @@ export default function SettingsPage() {
     //Check for default tab in URL hash
     const [tab, setTab] = useState(() => {
         const pageHash = window.location?.hash.slice(1);
+        if (pageHash === 'addons') return 'addons';
         return settingsTabs.find((tab) => tab.ctx.tabId === pageHash)?.ctx.tabId ?? settingsTabs[0].ctx.tabId;
     });
 
@@ -234,9 +236,13 @@ export default function SettingsPage() {
                         {settingsTabs.map((tab) => (
                             <TabsTrigger key={tab.ctx.tabId} value={tab.ctx.tabId} className="hover:text-primary">
                                 {tab.ctx.tabName}
-                                {/* <TriangleAlertIcon className="inline-block size-4 mt-0.5 ml-1 text-destructive self-center" /> */}
                             </TabsTrigger>
                         ))}
+                        {hasPerm('all_permissions') && (
+                            <TabsTrigger value="addons" className="hover:text-primary">
+                                Addons
+                            </TabsTrigger>
+                        )}
                     </TabsList>
                     {settingsTabs.map((tab) => (
                         <TabsContent value={tab.ctx.tabId} key={tab.ctx.tabId} className="mt-6">
@@ -255,6 +261,11 @@ export default function SettingsPage() {
                             />
                         </TabsContent>
                     ))}
+                    {hasPerm('all_permissions') && (
+                        <TabsContent value="addons" className="mt-6">
+                            <AddonsContent />
+                        </TabsContent>
+                    )}
                 </Tabs>
             </div>
         </div>
