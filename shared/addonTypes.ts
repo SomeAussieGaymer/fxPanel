@@ -168,6 +168,7 @@ export type CoreToAddonMessage =
     | { type: 'http-request'; id: string; payload: { method: string; path: string; headers: Record<string, string>; body: unknown; admin: { name: string; permissions: string[] } } }
     | { type: 'event'; payload: { event: string; data: unknown } }
     | { type: 'storage-response'; id: string; payload: { data: unknown; error?: string } }
+    | { type: 'api-call-response'; id: string; payload: { data: unknown; error?: string } }
     | { type: 'ws-subscribe'; payload: { sessionId: string } }
     | { type: 'ws-unsubscribe'; payload: { sessionId: string } };
 
