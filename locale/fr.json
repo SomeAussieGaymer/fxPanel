@@ -1,20 +1,20 @@
 {
     "$meta": {
-        "label": "French",
+        "label": "Français",
         "humanizer_language": "fr"
     },
     "restarter": {
         "server_unhealthy_kick_reason": "le serveur doit être redémarré, reconnecte-toi s'il te plaît",
         "partial_hang_warn": "En raison d'un blocage partiel, le serveur redémarrera dans 1 minute. Veuillez vous déconnecter maintenant.",
         "partial_hang_warn_discord": "En raison d'un blocage partiel, **%{servername}** redémarrera dans 1 minute.",
-        "schedule_reason": "redémarage prévu à %{time}",
+        "schedule_reason": "redémarrage prévu à %{time}",
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Tous les joueurs ont été exclus : %{reason}.",
+        "player": "Vous avez été exclu : %{reason}.",
+        "unknown_reason": "pour une raison inconnue"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Vous avez été banni pour: \"%{reason}\". Votre bannissement expirera dans: %{expiration}.",
@@ -27,34 +27,34 @@
             "label_author": "Banni par",
             "label_reason": "Raison du bannissement",
             "label_id": "ID de sanction",
-            "note_multiple_bans": "Note : vous avez plus d'un bannissement sur votre identifiant.",
-            "note_diff_license": "Note: the ban above was applied for another <code>license</code>, which means some of your IDs/HWIDs match the ones associated with that ban."
+            "note_multiple_bans": "Note : vous avez plus d'un bannissement actif sur vos identifiants.",
+            "note_diff_license": "Note : le bannissement ci-dessus a été appliqué pour une autre <code>license</code>, ce qui signifie que certains de vos identifiants ou HWID correspondent à ceux associés à ce bannissement."
         }
     },
     "whitelist_messages": {
         "admin_only": {
-            "mode_title": "Ce serveur est en mode <strong>Admin Only</strong> (maintenance).",
-            "insufficient_ids": "Vous n'avez pas d'identifiant <code>discord</code> ou <code>fivem</code>, et au moins un d'entre eux est requis pour valider que vous êtes un administrateur fxPanel.",
+            "mode_title": "Ce serveur est en mode <strong>administrateurs uniquement</strong> (maintenance).",
+            "insufficient_ids": "Vous n'avez pas d'identifiant <code>discord</code> ou <code>fivem</code>, et au moins l'un d'eux est requis pour vérifier que vous êtes un administrateur fxPanel.",
             "deny_message": "Vos identifiants ne sont attribués à aucun administrateur fxPanel."
         },
         "guild_member": {
-            "mode_title": "Ce serveur est en mode <strong>Discord Member Whitelist</strong>.",
-            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "mode_title": "Ce serveur est en mode <strong>liste blanche membres Discord</strong>.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour vérifier que vous avez rejoint notre serveur Discord. Veuillez ouvrir l'application Discord pour ordinateur et réessayer (l'application web ne fonctionne pas).",
             "deny_title": "Vous devez rejoindre notre serveur Discord pour vous connecter.",
             "deny_message": "Veuillez rejoindre le serveur %{guildname} puis réessayer."
         },
         "guild_roles": {
-            "mode_title": "Ce serveur est en mode <strong>Discord Role Whitelist</strong>.",
-            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour valider que vous avez rejoint notre serveur Discord. Please open the Discord Desktop app and try again (the Web app won't work).",
+            "mode_title": "Ce serveur est en mode <strong>liste blanche rôles Discord</strong>.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>discord</code>, qui est nécessaire pour vérifier que vous avez rejoint notre serveur Discord. Veuillez ouvrir l'application Discord pour ordinateur et réessayer (l'application web ne fonctionne pas).",
             "deny_notmember_title": "Vous devez rejoindre notre serveur Discord pour vous connecter.",
             "deny_notmember_message": "Veuillez rejoindre le serveur %{guildname}, obtenez l'un des rôles requis, puis réessayez.",
             "deny_noroles_title": "Vous n'avez pas le rôle requis pour vous connecter.",
             "deny_noroles_message": "Pour rejoindre ce serveur, vous devez avoir au moins un des rôles requis du serveur %{guildname}."
         },
         "approved_license": {
-            "mode_title": "Ce serveur est en mode <strong>License Whitelist</strong>.",
-            "insufficient_ids": "Vous n'avez pas l'identifiant <code>license</code>, ce qui signifique que l'option <code>sv_lan</code> est activée. Si vous êtes le propriétaire du serveur, vous pouvez le désactivez dans votre ficher <code>server.cfg</code>.",
-            "deny_title": "Vous n'êtes pas sur la whitelist pour rejoindre ce serveur.",
+            "mode_title": "Ce serveur est en mode <strong>liste blanche par licence</strong>.",
+            "insufficient_ids": "Vous n'avez pas l'identifiant <code>license</code>, ce qui signifie que l'option <code>sv_lan</code> est activée. Si vous êtes le propriétaire du serveur, vous pouvez la désactiver dans votre fichier <code>server.cfg</code>.",
+            "deny_title": "Vous n'êtes pas autorisé par la liste blanche à rejoindre ce serveur.",
             "request_id_label": "ID de requête"
         }
     },
@@ -67,23 +67,24 @@
     },
     "nui_warning": {
         "title": "AVERTISSEMENT",
-        "warned_by": "Avertis par:",
+        "warned_by": "Averti par :",
         "stale_message": "Cet avertissement a été émis avant que vous ne vous connectiez au serveur.",
         "dismiss_key": "ESPACE",
         "instruction": "Maintenir %{key} pendant %{smart_count} seconde pour cacher ce message. |||| Maintenir %{key} pendant %{smart_count} secondes pour cacher ce message."
     },
     "nui_menu": {
         "misc": {
-            "help_message": "Menu fxPanel activé, ecrivez /tx pour l'ouvrir.\nVous pouvez aussi configurer une touche [Paramètre du Jeu > Configuration des touches > FiveM > Menu: Open Main Page].",
-            "menu_not_admin": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur fxPanel.\nSi vous êtes enregistré(e) sur fxPanel, allez dans Admin Manager et assurez-vous que votre identifiant est bien enregistré.",
-            "menu_auth_failed": "fxPanel Menu authentication failed with reason: %{reason}",
+            "help_message": "Menu fxPanel activé, écrivez /tx pour l'ouvrir.\nVous pouvez aussi configurer une touche [Paramètres du jeu > Raccourcis clavier > FiveM > Menu : ouvrir la page principale].",
+            "menu_not_admin": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur fxPanel.\nSi vous êtes enregistré(e) sur fxPanel, allez dans le gestionnaire d'administrateurs et assurez-vous que votre identifiant est bien enregistré.",
+            "menu_auth_failed": "L'authentification au menu fxPanel a échoué pour la raison suivante : %{reason}",
             "no_perms": "Vous n'avez pas les permissions suffisantes.",
             "unknown_error": "Une erreur inconnue s'est produite.",
             "not_enabled": "Le Menu fxPanel n'est pas activé ! Vous pouvez l'activer dans les paramètres de fxPanel.",
             "announcement_title": "Annonce serveur par %{author}:",
             "dialog_empty_input": "Vous ne pouvez pas avoir un champ vide.",
             "directmessage_title": "Message d'un administrateur : %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "Cette action nécessite que OneSync soit activé.",
+            "redm_not_available": "Cette option n'est pas encore disponible sur RedM."
         },
         "frozen": {
             "froze_player": "Vous avez gelé le joueur !",
@@ -98,15 +99,15 @@
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Utilisez %{key} pour changer de pages & et les flèches pour naviguer dans le menu",
-                "tooltip_2": "Certains éléments de menu ont des sous-options qui peuvent être sélectionnées à l'aide des fléches gauche et droite"
+                "tooltip_1": "Utilisez %{key} pour changer de page et les flèches pour naviguer dans le menu",
+                "tooltip_2": "Certains éléments de menu ont des sous-options qui peuvent être sélectionnées à l'aide des flèches gauche et droite"
             },
             "player_mode": {
                 "title": "Mode du joueur",
                 "noclip": {
-                    "title": "NoClip",
+                    "title": "Vol libre",
                     "label": "Volez comme un oiseau",
-                    "success": "NoClip activé"
+                    "success": "Vol libre activé"
                 },
                 "godmode": {
                     "title": "Invincible",
@@ -114,9 +115,9 @@
                     "success": "Invincibilité activée"
                 },
                 "superjump": {
-                    "title": "Super Jump",
+                    "title": "Super saut",
                     "label": "Basculer sur le mode super saut, le joueur courra également plus vite",
-                    "success": "Super Jump activé"
+                    "success": "Super saut activé"
                 },
                 "normal": {
                     "title": "Normal",
@@ -129,34 +130,38 @@
                 "generic_success": "Vous avez été téléporté !",
                 "waypoint": {
                     "title": "GPS",
-                    "label": "TP sur votre point GPS",
-                    "error": "Aucun point GPS définit."
+                    "label": "Aller au point GPS",
+                    "error": "Aucun point GPS défini."
                 },
                 "coords": {
                     "title": "Coordonnées",
-                    "label": "TP sur coordonnées",
+                    "label": "Aller aux coordonnées",
                     "dialog_title": "Téléportation",
                     "dialog_desc": "Fournissez des coordonnées au format x, y, z pour vous téléporter.",
-                    "dialog_error": "Coordonnées invalide. Elles doivent être sous le format suivant: 111, 222, 33"
+                    "dialog_error": "Coordonnées invalides. Elles doivent respecter le format suivant : 111, 222, 33"
                 },
                 "back": {
                     "title": "Retour",
-                    "label": "TP sur ancienne position",
+                    "label": "Retour à la position précédente",
                     "error": "Vous n'avez aucune dernière position !"
                 },
                 "copy": {
                     "title": "Copier",
                     "label": "Copiez votre position"
+                },
+                "goto": {
+                    "usage": "Syntaxe : /goto [id joueur]",
+                    "invalid_id": "ID joueur invalide. La valeur doit être un nombre."
                 }
             },
             "vehicle": {
                 "title": "Véhicule",
                 "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
-                    "title": "Spawn",
+                    "title": "Apparition",
                     "label": "Créez un véhicule par modèle",
-                    "dialog_title": "Faire apparaître un vehicule",
-                    "dialog_desc": "Entrer le nom du véhicule que vous voulez faire apparaître.",
+                    "dialog_title": "Faire apparaître un véhicule",
+                    "dialog_desc": "Entrez le nom du véhicule que vous voulez faire apparaître.",
                     "dialog_success": "Véhicule apparu !",
                     "dialog_error": "Le modèle de véhicule '%{modelName}' n'existe pas !",
                     "dialog_info": "Tentative de faire apparaître %{modelName}."
@@ -172,12 +177,12 @@
                     "success": "Véhicule supprimé !"
                 },
                 "boost": {
-                    "title": "Boost",
-                    "label": "Boostez la voiture pour obtenir un maximum de fun (et peut-être de vitesse).",
-                    "success": "Véhicule boosté !",
-                    "already_boosted": "Ce véhicule est déjà boosté.",
-                    "unsupported_class": "Cette classe de véhicule n'est pas supportée.",
-                    "redm_not_mounted": "You can only boost when mounted on a horse."
+                    "title": "Impulsion",
+                    "label": "Propulsez le véhicule pour un maximum d'amusement (et peut-être de vitesse).",
+                    "success": "Véhicule propulsé !",
+                    "already_boosted": "Ce véhicule a déjà été propulsé.",
+                    "unsupported_class": "Cette classe de véhicule n'est pas prise en charge.",
+                    "redm_not_mounted": "L'impulsion n'est disponible qu'à cheval."
                 }
             },
             "heal": {
@@ -188,18 +193,26 @@
                     "success_0": "Santé mise à 100% !",
                     "success_1": "Vous avez été soigné !",
                     "success_2": "Vous êtes désormais en pleine forme !",
-                    "success_3": "Vos bobos ont été soigné !"
+                    "success_3": "Vos bobos ont été soignés !"
                 },
                 "everyone": {
                     "title": "Tous les joueurs",
-                    "label": "Soignez & réanimez",
-                    "success": "Tous les joueurs ont été soigné et réanimé."
+                    "label": "Soignez et réanimez",
+                    "success": "Tous les joueurs ont été soignés et réanimés."
+                },
+                "radius": {
+                    "title": "Rayon",
+                    "label": "Soignez et réanimez les joueurs dans un rayon donné",
+                    "dialog_title": "Soin par rayon",
+                    "dialog_desc": "Entrez le rayon (en unités du jeu) pour soigner les joueurs à proximité",
+                    "dialog_error": "Rayon invalide. La valeur doit être comprise entre 1 et 500.",
+                    "success": "Les joueurs dans le rayon indiqué ont été soignés et réanimés."
                 }
             },
             "announcement": {
                 "title": "Faire une annonce",
                 "label": "Faire une annonce pour tous les joueurs actuellement connectés.",
-                "dialog_desc": "Entrez le message que vous souhaitez diffuser à tous les joueurs..",
+                "dialog_desc": "Entrez le message que vous souhaitez diffuser à tous les joueurs.",
                 "dialog_placeholder": "Message",
                 "dialog_success": "L'annonce est en train d'être envoyée."
             },
@@ -211,10 +224,10 @@
                 "dialog_error": "Rayon invalide. Veuillez réessayer."
             },
             "player_ids": {
-                "title": "Afficher les ID des joueurs",
+                "title": "Afficher les identifiants des joueurs",
                 "label": "Afficher les identifiants des joueurs (et d'autres informations) au-dessus de la tête de tous les joueurs proches.",
-                "alert_show": "Les ID des joueurs sont affichés.",
-                "alert_hide": "Les ID des joueurs ne sont plus affichés."
+                "alert_show": "Les identifiants des joueurs sont affichés.",
+                "alert_hide": "Les identifiants des joueurs ne sont plus affichés."
             }
         },
         "page_players": {
@@ -225,11 +238,11 @@
                 "zero_players": "Aucun joueur trouvé"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtrer par",
+                "no_filter": "Aucun filtre",
+                "is_admin": "Administrateur",
+                "is_injured": "Blessé / mort",
+                "in_vehicle": "En véhicule"
             },
             "sort": {
                 "label": "Trier par",
@@ -237,8 +250,8 @@
                 "id": "ID",
                 "joined_first": "Premières connexions",
                 "joined_last": "Dernières connexions",
-                "closest": "Le - loin",
-                "farthest": "Le + loin"
+                "closest": "Le plus proche",
+                "farthest": "Le plus éloigné"
             },
             "card": {
                 "health": "Santé : %{percentHealth}%"
@@ -262,10 +275,10 @@
                 "moderation": {
                     "title": "Modération",
                     "options": {
-                        "dm": "PM",
+                        "dm": "MP",
                         "warn": "Avertir",
                         "kick": "Exclure",
-                        "set_admin": "Donner droits admin"
+                        "set_admin": "Accorder les droits d'administrateur"
                     },
                     "dm_dialog": {
                         "title": "Message privé",
@@ -287,26 +300,26 @@
                     }
                 },
                 "interaction": {
-                    "title": "Intéractions",
+                    "title": "Interactions",
                     "options": {
                         "heal": "Soigner",
-                        "go_to": "TP à lui",
-                        "bring": "TP à soi",
-                        "spectate": "Surveiller",
+                        "go_to": "Aller au joueur",
+                        "bring": "Amener ici",
+                        "spectate": "Observer",
                         "toggle_freeze": "Geler/Dégeler"
                     },
                     "notifications": {
                         "heal_player": "Le joueur a été soigné",
                         "tp_player": "Téléportation au joueur",
                         "bring_player": "Le joueur a été téléporté à vous",
-                        "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode surveillance.",
+                        "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode observation.",
                         "spectate_yourself": "Vous ne pouvez pas vous surveiller vous-même.",
                         "freeze_yourself": "Vous ne pouvez pas vous geler vous-même.",
-                        "spectate_cycle_failed": "Il n'y a pas de joueurs vers lesquels faire du vélo."
+                        "spectate_cycle_failed": "Aucun autre joueur vers lequel basculer en mode observation."
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "Farces",
                     "options": {
                         "drunk": "Saouler",
                         "fire": "Enflammer",
@@ -319,15 +332,15 @@
                 "session_time": "Durée de la session",
                 "play_time": "Temps de jeu",
                 "joined": "Connecté le",
-                "whitelisted_label": "whitelisté",
+                "whitelisted_label": "Sur liste blanche",
                 "whitelisted_notyet": "pas encore",
                 "btn_wl_add": "AJOUTER WL",
                 "btn_wl_remove": "RETIRER WL",
-                "btn_wl_success": "Status de la whitelist changée.",
-                "log_label": "Log",
+                "btn_wl_success": "Statut de la liste blanche modifié.",
+                "log_label": "Sanctions",
                 "log_empty": "Aucune sanction trouvée.",
-                "log_ban_count": "%{smart_count} ban |||| %{smart_count} bans",
-                "log_warn_count": "%{smart_count} warn |||| %{smart_count} warns",
+                "log_ban_count": "%{smart_count} bannissement |||| %{smart_count} bannissements",
+                "log_warn_count": "%{smart_count} avertissement |||| %{smart_count} avertissements",
                 "log_btn": "DÉTAILS",
                 "notes_changed": "Note du joueur changée.",
                 "notes_placeholder": "Notes à propos de ce joueur..."
@@ -337,7 +350,7 @@
                 "btn_revoke": "RÉVOQUER",
                 "revoked_success": "Action révoquée !",
                 "banned_by": "BANNI par %{author}",
-                "warned_by": "WARN par %{author}",
+                "warned_by": "Averti par %{author}",
                 "revoked_by": "Révoqué par %{author}.",
                 "expired_at": "Expiré le %{date}.",
                 "expires_at": "Expire le %{date}."
@@ -350,17 +363,17 @@
                 "days": "jour(s)",
                 "weeks": "semaine(s)",
                 "months": "mois",
-                "permanent": "Permanente",
+                "permanent": "Permanent",
                 "custom": "Personnalisée",
-                "helper_text": "Selectionnez une durée",
+                "helper_text": "Sélectionnez une durée",
                 "submit": "Bannir",
                 "reason_required": "Vous devez inclure une raison de sanction.",
                 "success": "Joueur banni."
             },
             "ids": {
                 "current_ids": "Identifiants actuels",
-                "previous_ids": "Précedents identifiants",
-                "all_hwids": "All Hardware IDs"
+                "previous_ids": "Identifiants précédemment utilisés",
+                "all_hwids": "Tous les identifiants matériels (HWID)"
             }
         }
     }
