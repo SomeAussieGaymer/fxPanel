@@ -31,14 +31,7 @@ export interface AddonStorage {
 }
 
 export interface AddonPlayers {
-    /**
-     * Adds a custom tag to an online player. Requires `players.write` permission.
-     * The tag must be defined in txAdmin Settings → Player Tags.
-     */
     addTag(netid: number, tagId: string): Promise<true>;
-    /**
-     * Removes a custom tag from an online player. Requires `players.write` permission.
-     */
     removeTag(netid: number, tagId: string): Promise<true>;
 }
 
@@ -65,16 +58,4 @@ export interface Addon {
     ready(): void;
 }
 
-/**
- * Creates and returns the addon instance that communicates with fxPanel core.
- *
- * @example
- * const addon = createAddon();
- *
- * addon.on('playerJoining', async ({ netid }) => {
- *     await addon.players.addTag(netid, 'vip');
- * });
- *
- * addon.ready();
- */
 export function createAddon(): Addon;
