@@ -373,7 +373,9 @@ export default class AddonProcess {
                 respond(null, `unknown API method: ${method}`);
             }
         } catch (error) {
-            respond(null, (error as Error).message);
+            const errorMessage =
+                (error instanceof Error ? error.message || error.name : String(error)) || 'Unknown error';
+            respond(null, errorMessage);
         }
     }
 
