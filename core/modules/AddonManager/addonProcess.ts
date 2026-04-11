@@ -363,7 +363,11 @@ export default class AddonProcess {
                     return;
                 }
 
-                player.setCustomTag(tagId, method === 'players.addTag');
+                const isAddTagAction = method === 'players.addTag';
+                player.setCustomTag(tagId, isAddTagAction);
+                console.info(
+                    `${isAddTagAction ? 'Added' : 'Removed'} tag '${tagId}' via addon API (addonId: ${this.addonId}, player: ${player.netid})`,
+                );
                 respond(true);
             } else {
                 respond(null, `unknown API method: ${method}`);
