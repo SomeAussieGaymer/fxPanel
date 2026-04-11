@@ -105,9 +105,9 @@
             "player_mode": {
                 "title": "Mode du joueur",
                 "noclip": {
-                    "title": "Vol libre",
-                    "label": "Volez comme un oiseau",
-                    "success": "Vol libre activé"
+                    "title": "NoClip",
+                    "label": "Vous pourrez alors traverser les murs et autres objets",
+                    "success": "NoClip activé"
                 },
                 "godmode": {
                     "title": "Invincible",
@@ -177,12 +177,12 @@
                     "success": "Véhicule supprimé !"
                 },
                 "boost": {
-                    "title": "Impulsion",
-                    "label": "Propulsez le véhicule pour un maximum d'amusement (et peut-être de vitesse).",
-                    "success": "Véhicule propulsé !",
-                    "already_boosted": "Ce véhicule a déjà été propulsé.",
+                    "title": "Boost",
+                    "label": "Boostez la voiture pour obtenir un maximum d'amusement (et peut-être de vitesse).",
+                    "success": "Véhicule boosté !",
+                    "already_boosted": "Ce véhicule a déjà été boosté !",
                     "unsupported_class": "Cette classe de véhicule n'est pas prise en charge.",
-                    "redm_not_mounted": "L'impulsion n'est disponible qu'à cheval."
+                    "redm_not_mounted": "Vous ne pouvez booster que si vous êtes monté sur un cheval."
                 }
             },
             "heal": {
@@ -319,7 +319,7 @@
                     }
                 },
                 "troll": {
-                    "title": "Farces",
+                    "title": "Troll",
                     "options": {
                         "drunk": "Saouler",
                         "fire": "Enflammer",
