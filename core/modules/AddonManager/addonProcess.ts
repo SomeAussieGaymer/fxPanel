@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import consoleFactory from '@lib/console';
 import { txEnv } from '@core/globalData';
 import { AddonStorageScope } from './addonStorage';
+import { ServerPlayer } from '@lib/player/playerClasses';
 import type {
     AddonState,
     AddonRouteDescriptor,
@@ -308,6 +309,13 @@ export default class AddonProcess {
                 console[level](`${this.logPrefix} ${truncatedMsg}`);
                 break;
             }
+            case 'api-call': {
+                this.handleApiCall(
+                    msg.id,
+                    msg.payload as { method: string; args: unknown[] },
+                );
+                break;
+            }
             case 'error': {
                 const { message, stack } = msg.payload as { message: string; stack?: string };
                 console.error(`${this.logPrefix} Error: ${message}`);
@@ -317,6 +325,57 @@ export default class AddonProcess {
             default: {
                 console.warn(`${this.logPrefix} Unknown message type: ${(msg as any).type}`);
             }
+        }
+    }
+
+    /**
+     * Handle addon API calls (e.g. players.addTag, players.removeTag).
+     */
+    private handleApiCall(id: string, payload: { method: string; args: unknown[] }): void {
+        const respond = (data: unknown, error?: string) => {
+            this.send({ type: 'api-call-response', id, payload: { data, error } });
+        };
+
+        try {
+            const { method, args } = payload;
+
+            if (method === 'players.addTag' || method === 'players.removeTag') {
+                if (!this.permissions.includes('players.write')) {
+                    respond(null, 'players.write permission not granted');
+                    return;
+                }
+
+                const [netid, tagId] = args;
+                if (typeof netid !== 'number' || typeof tagId !== 'string') {
+                    respond(null, 'invalid arguments: netid must be number, tagId must be string');
+                    return;
+                }
+
+                const validIds = new Set((txConfig.gameFeatures.customTags ?? []).map((t: any) => t.id));
+                if (!validIds.has(tagId)) {
+                    respond(null, `unknown custom tag id: ${tagId}`);
+                    return;
+                }
+
+                const player = txCore.fxPlayerlist.getPlayerById(netid);
+                if (!(player instanceof ServerPlayer) || !player.isRegistered) {
+                    respond(null, `player netid ${netid} not found or not registered`);
+                    return;
+                }
+
+                const isAddTagAction = method === 'players.addTag';
+                player.setCustomTag(tagId, isAddTagAction);
+                console.info(
+                    `${isAddTagAction ? 'Added' : 'Removed'} tag '${tagId}' via addon API (addonId: ${this.addonId}, player: ${player.netid})`,
+                );
+                respond(true);
+            } else {
+                respond(null, `unknown API method: ${method}`);
+            }
+        } catch (error) {
+            const errorMessage =
+                (error instanceof Error ? error.message || error.name : String(error)) || 'Unknown error';
+            respond(null, errorMessage);
         }
     }
 

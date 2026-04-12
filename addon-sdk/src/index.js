@@ -20,6 +20,7 @@ export function createAddon() {
     const routes = [];
     const eventHandlers = new Map();
     const pendingStorage = new Map();
+    const pendingApiCalls = new Map();
     let correlationCounter = 0;
 
     /**
@@ -127,6 +128,30 @@ export function createAddon() {
         },
         error(message) {
             send({ type: 'log', payload: { level: 'error', message: String(message) } });
+        },
+    };
+
+    // ============================================
+    // Players API
+    // ============================================
+    function apiCall(method, args) {
+        return new Promise((resolve, reject) => {
+            const id = nextId();
+            const timer = setTimeout(() => {
+                pendingApiCalls.delete(id);
+                reject(new Error(`API call ${method} timed out after 5000ms`));
+            }, 5000);
+            pendingApiCalls.set(id, { resolve, reject, timer });
+            send({ type: 'api-call', id, payload: { method, args } });
+        });
+    }
+
+    const players = {
+        addTag(netid, tagId) {
+            return apiCall('players.addTag', [netid, tagId]);
+        },
+        removeTag(netid, tagId) {
+            return apiCall('players.removeTag', [netid, tagId]);
         },
     };
 
@@ -263,6 +288,20 @@ export function createAddon() {
                 break;
             }
 
+            case 'api-call-response': {
+                const pending = pendingApiCalls.get(msg.id);
+                if (pending) {
+                    pendingApiCalls.delete(msg.id);
+                    clearTimeout(pending.timer);
+                    if (msg.payload.error) {
+                        pending.reject(new Error(msg.payload.error));
+                    } else {
+                        pending.resolve(msg.payload.data);
+                    }
+                }
+                break;
+            }
+
             case 'ws-subscribe': {
                 if (wsHandlers.onSubscribeFn) {
                     wsHandlers.onSubscribeFn(msg.payload.sessionId);
@@ -303,6 +342,7 @@ export function createAddon() {
     return {
         id: addonId,
         storage,
+        players,
         registerRoute,
         ws,
         on,

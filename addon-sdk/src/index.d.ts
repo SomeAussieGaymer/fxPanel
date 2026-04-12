@@ -30,6 +30,11 @@ export interface AddonStorage {
     list(prefix?: string): Promise<string[]>;
 }
 
+export interface AddonPlayers {
+    addTag(netid: number, tagId: string): Promise<true>;
+    removeTag(netid: number, tagId: string): Promise<true>;
+}
+
 export interface AddonWebSocket {
     push(event: string, data: unknown): void;
     onSubscribe(handler: (sessionId: string) => void): void;
@@ -45,6 +50,7 @@ export interface AddonLog {
 export interface Addon {
     readonly id: string;
     storage: AddonStorage;
+    players: AddonPlayers;
     registerRoute(method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH', path: string, handler: RouteHandler): void;
     ws: AddonWebSocket;
     on(event: string, handler: (data: unknown) => void | Promise<void>): void;
