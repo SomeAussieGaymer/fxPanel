@@ -90,6 +90,7 @@ export type InjectedTxConsts = {
         icon: string | undefined;
     };
     hideFxsUpdateNotification: boolean;
+    allowSelfIdentifierEdit: boolean;
 
     //Auth
     preAuth: ReactAuthDataType | false;

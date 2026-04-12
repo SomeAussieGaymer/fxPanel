@@ -109,6 +109,18 @@ export {
 export { get as dev_get, post as dev_post } from './devDebug.js';
 
 export {
+    addonsList as addons_list,
+    addonsPanelManifest as addons_panelManifest,
+    addonsNuiManifest as addons_nuiManifest,
+    addonsApprove as addons_approve,
+    addonsRevoke as addons_revoke,
+    addonsProxy as addons_proxy,
+    addonsServePanelFile as addons_servePanelFile,
+    addonsServeNuiFile as addons_serveNuiFile,
+    addonsServeStaticFile as addons_serveStaticFile,
+} from './addons';
+
+export {
     reportsList as reports_list,
     reportsDetail as reports_detail,
     reportsMessage as reports_message,

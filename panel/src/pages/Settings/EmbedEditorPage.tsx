@@ -138,7 +138,7 @@ export default function EmbedEditorPage() {
                             The server status embed is customizable by editing the JSON below. <br />
                             You can use the placeholders to include dynamic server information in the embed. <br />
                             For information refer to{' '}
-                            <TxAnchor href="https://github.com/tabarra/txAdmin/blob/master/docs/discord-status.md">
+                            <TxAnchor href="https://fxpanel.org/docs/v0.1.1-Beta/discord">
                                 our docs
                             </TxAnchor>
                             .

@@ -14,6 +14,13 @@ const customTagSchema = z.object({
 });
 export type CustomTagConfig = z.infer<typeof customTagSchema>;
 
+const reportsEnabled = typeDefinedConfig({
+    name: 'Reports Enabled',
+    default: true,
+    validator: z.boolean(),
+    fixer: SYM_FIXER_DEFAULT,
+});
+
 const menuEnabled = typeDefinedConfig({
     name: 'Menu Enabled',
     default: true,
@@ -99,6 +106,7 @@ const customTags = typeDefinedConfig({
 });
 
 export default {
+    reportsEnabled,
     menuEnabled,
     menuAlignRight,
     menuPageKey,

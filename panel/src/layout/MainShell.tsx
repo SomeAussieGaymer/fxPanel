@@ -32,6 +32,10 @@ export default function MainShell() {
     const toggleTheme = useToggleTheme();
     const { hasScaledViewportMismatch } = useShellBreakpoints();
 
+    // Expose modal openers so addons can call them directly
+    (window as any).txAddonApi = (window as any).txAddonApi || {};
+    (window as any).txAddonApi.openPlayerModal = openPlayerModal;
+
     //Listener for messages from child iframes (legacy routes) or other sources
     useEventListener('message', (e: TxMessageEvent) => {
         if (e.data.type === 'logoutNotice') {

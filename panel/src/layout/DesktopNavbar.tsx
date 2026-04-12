@@ -13,6 +13,7 @@ import MainPageLink from '@/components/mainPageLink';
 import { cva } from 'class-variance-authority';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAdminPerms } from '@/hooks/auth';
+import { useAddonLoader } from '@/hooks/addons';
 
 const buttonVariants = cva(
     `group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 ring-offset-background  focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`,
@@ -80,6 +81,8 @@ function HeaderMenuItem(props: HeaderMenuLinkProps) {
 //NOTE: breaking NavigationMenuItem into a separate menu because the dropdown is positioned wrong otherwise
 export default function DesktopNavbar() {
     const { hasPerm } = useAdminPerms();
+    const { pages: addonPages } = useAddonLoader();
+    const sidebarAddonPages = addonPages.filter(p => p.sidebar !== false);
 
     return (
         <div className="flex flex-row space-x-1 select-none">
@@ -107,7 +110,7 @@ export default function DesktopNavbar() {
                             <HeaderMenuLink className="w-36 justify-start" href="/insights">
                                 Overview
                             </HeaderMenuLink>
-                            <HeaderMenuLink className="w-36 justify-start" href="/insights/player-drops">
+                            <HeaderMenuLink className="w-36 justify-start" href="/server/player-drops">
                                 Player Drops
                             </HeaderMenuLink>
                         </NavigationMenuContent>
@@ -173,6 +176,45 @@ export default function DesktopNavbar() {
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
+
+            {sidebarAddonPages.length > 0 && (
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        {sidebarAddonPages.length === 1 ? (
+                            <HeaderMenuItem
+                                href={sidebarAddonPages[0].path}
+                                disabled={sidebarAddonPages[0].permission ? !hasPerm(sidebarAddonPages[0].permission) : false}
+                            >
+                                {sidebarAddonPages[0].title}
+                            </HeaderMenuItem>
+                        ) : (
+                            <NavigationMenuItem>
+                                <NavigationMenuTrigger
+                                    onClick={(e) => {
+                                        if (e.currentTarget.dataset['state'] === 'open') {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                >
+                                    Addons
+                                </NavigationMenuTrigger>
+                                <NavigationMenuContent className="flex list-none flex-col gap-2 p-4">
+                                    {sidebarAddonPages.map((page) => (
+                                        <HeaderMenuLink
+                                            key={page.path}
+                                            className="w-36 justify-start"
+                                            href={page.path}
+                                            disabled={page.permission ? !hasPerm(page.permission) : false}
+                                        >
+                                            {page.title}
+                                        </HeaderMenuLink>
+                                    ))}
+                                </NavigationMenuContent>
+                            </NavigationMenuItem>
+                        )}
+                    </NavigationMenuList>
+                </NavigationMenu>
+            )}
         </div>
     );
 }
