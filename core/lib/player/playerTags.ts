@@ -12,7 +12,12 @@ export const getTagDefinitions = (): TagDefinition[] => {
     }
     const merged: TagDefinition[] = [];
     for (const auto of AUTO_TAG_DEFINITIONS) {
-        merged.push(customMap.get(auto.id) ?? auto);
+        const customOverride = customMap.get(auto.id);
+        merged.push({
+            ...auto,
+            label: customOverride?.label ?? auto.label,
+            color: customOverride?.color ?? auto.color,
+        });
         customMap.delete(auto.id);
     }
     for (const custom of customMap.values()) {
@@ -54,7 +59,7 @@ export const computePlayerTags = (player: ServerPlayer): PlayerTag[] => {
     }
 
     //Append valid custom tags from DB
-    if (dbData?.customTags?.length) {
+    if (dbData && dbData.customTags?.length) {
         const validIds = getValidCustomTagIds();
         for (const ct of dbData.customTags) {
             if (validIds.has(ct)) {
@@ -92,7 +97,7 @@ export const computePlayerTagsGeneric = (player: BasePlayer): PlayerTag[] => {
     }
 
     //Append valid custom tags from DB
-    if (dbData?.customTags?.length) {
+    if (dbData && dbData.customTags?.length) {
         const validIds = getValidCustomTagIds();
         for (const ct of dbData.customTags) {
             if (validIds.has(ct)) {

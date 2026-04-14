@@ -62,6 +62,13 @@ export class BasePlayer {
     }
 
     /**
+     * Returns a clone of this.dbData when available.
+     */
+    getDbData() {
+        return structuredClone(this.dbData);
+    }
+
+    /**
      * Returns all actions related to all available ids
      * NOTE: theoretically ServerPlayer.setupDatabaseData() guarantees that DatabasePlayer.dbData.ids array
      *  will contain the license but may be better to also explicitly add it to the array here?
@@ -221,8 +228,9 @@ export class ServerPlayer extends BasePlayer {
                 });
             } else {
                 //Register player to the database
+                const playerLicense = this.license as DatabasePlayerType['license'];
                 const toRegister: DatabasePlayerType = {
-                    license: this.license,
+                    license: playerLicense,
                     ids: this.ids,
                     hwids: this.hwids,
                     displayName: this.displayName,

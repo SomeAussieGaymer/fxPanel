@@ -22,6 +22,7 @@ type CustomTagEntry = {
 };
 
 const AUTO_TAG_IDS = new Set(AUTO_TAG_DEFINITIONS.map((t) => t.id));
+const AUTO_TAG_LOOKUP = new Map(AUTO_TAG_DEFINITIONS.map((tag) => [tag.id, tag]));
 
 const AUTO_TAG_DESCRIPTIONS: Record<string, string> = {
     staff: 'Shown on anyone who has an fxPanel admin account.',
@@ -43,7 +44,12 @@ const buildMergedTags = (stored: CustomTagEntry[]): CustomTagEntry[] => {
     const storedMap = new Map(stored.map((t) => [t.id, t]));
     const merged: CustomTagEntry[] = [];
     for (const auto of AUTO_TAG_DEFINITIONS) {
-        merged.push(storedMap.get(auto.id) ?? { ...auto });
+        const storedTag = storedMap.get(auto.id);
+        merged.push({
+            ...auto,
+            label: storedTag?.label ?? auto.label,
+            color: storedTag?.color ?? auto.color,
+        });
         storedMap.delete(auto.id);
     }
     for (const custom of storedMap.values()) {
@@ -59,10 +65,14 @@ const buildMergedTags = (stored: CustomTagEntry[]): CustomTagEntry[] => {
 const extractStoredTags = (merged: CustomTagEntry[]): CustomTagEntry[] => {
     const result: CustomTagEntry[] = [];
     for (const tag of merged) {
-        const autoDef = AUTO_TAG_DEFINITIONS.find((a) => a.id === tag.id);
+        const autoDef = AUTO_TAG_LOOKUP.get(tag.id);
         if (autoDef) {
-            if (tag.color !== autoDef.color || tag.priority !== autoDef.priority || tag.label !== autoDef.label) {
-                result.push(tag);
+            if (tag.color !== autoDef.color || tag.label !== autoDef.label) {
+                result.push({
+                    ...autoDef,
+                    label: tag.label,
+                    color: tag.color,
+                });
             }
         } else {
             result.push(tag);
@@ -184,7 +194,7 @@ export default function ConfigCardGamePlayerTags({ cardCtx, pageCtx }: SettingsC
                                         value={tag.label}
                                         onChange={(e) => updateMergedTag(i, 'label', e.target.value)}
                                         placeholder="Streamer"
-                                        disabled={pageCtx.isReadOnly || isAutoTag}
+                                        disabled={pageCtx.isReadOnly}
                                         maxLength={24}
                                     />
                                 </div>
@@ -211,7 +221,7 @@ export default function ConfigCardGamePlayerTags({ cardCtx, pageCtx }: SettingsC
                                         onChange={(e) =>
                                             updateMergedTag(i, 'priority', parseInt(e.target.value, 10) || 1)
                                         }
-                                        disabled={pageCtx.isReadOnly}
+                                        disabled={pageCtx.isReadOnly || isAutoTag}
                                     />
                                 </div>
                                 {isAutoTag ? (
@@ -251,11 +261,12 @@ export default function ConfigCardGamePlayerTags({ cardCtx, pageCtx }: SettingsC
                     </Button>
                 </div>
                 <SettingItemDesc>
-                    Built-in tags (Staff, Problematic, Newcomer) are always present — you can change their color and
-                    priority. Define up to 20 additional custom tags for identifying players (e.g. Streamer, VIP). Tags
-                    are assigned via resource exports: <strong>exports.txadmin:addPlayerTag(serverId, tagId)</strong>{' '}
-                    and <strong>exports.txadmin:removePlayerTag(serverId, tagId)</strong>. Lower priority number =
-                    higher importance (1 is highest priority, 100 is lowest).
+                    Built-in tags (Staff, Problematic, Newcomer) are always present. You can change their label and
+                    color, but their ID and priority stay fixed. Define up to 20 additional custom tags for identifying
+                    players (e.g. Streamer, VIP). Tags are assigned via resource exports:{' '}
+                    <strong>exports.txadmin:addPlayerTag(serverId, tagId)</strong> and{' '}
+                    <strong>exports.txadmin:removePlayerTag(serverId, tagId)</strong>. Lower priority number = higher
+                    importance (1 is highest priority, 100 is lowest).
                 </SettingItemDesc>
             </SettingItem>
         </SettingsCardShell>
