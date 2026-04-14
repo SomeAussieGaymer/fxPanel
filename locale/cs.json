@@ -12,9 +12,9 @@
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
     "kick_messages": {
-        "everyone": "All players kicked: %{reason}.",
-        "player": "You have been kicked: %{reason}.",
-        "unknown_reason": "for unknown reason"
+        "everyone": "Všichni hráči byli vyhozeni: %{reason}.",
+        "player": "Byl jsi vyhozen: %{reason}.",
+        "unknown_reason": "z neznámého důvodu"
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Byl jsi zabanován z důvodu: \"%{reason}\". Tvůj ban vyprší za: %{expiration}.",
@@ -83,7 +83,8 @@
             "announcement_title": "Server oznámení od %{author}:",
             "dialog_empty_input": "Políčko nemůže být prázdné.",
             "directmessage_title": "Soukromá zpráva od admina %{author}:",
-            "onesync_error": "This action requires OneSync to be enabled."
+            "onesync_error": "This action requires OneSync to be enabled.",
+            "redm_not_available": "Tato možnost pro RedM zatím není dostupná."
         },
         "frozen": {
             "froze_player": "Zmrazil jsi hráče!",
@@ -147,6 +148,10 @@
                 "copy": {
                     "title": "Zkopírovat souřadnice",
                     "label": "Zkopírovat souřadnice do schránky."
+                },
+                "goto": {
+                    "usage": "Použití: /goto [ID hráče]",
+                    "invalid_id": "Neplatné ID hráče. Musí to být číslo."
                 }
             },
             "vehicle": {
@@ -194,6 +199,14 @@
                     "title": "Všechny",
                     "label": "Vyléčí a oživí všechny hráče",
                     "success": "Všichni hráči oživeni a vyléčeni."
+                },
+                "radius": {
+                    "title": "Poloměr",
+                    "label": "Vyléčí a oživí hráče v dosahu",
+                    "dialog_title": "Poloměr léčení",
+                    "dialog_desc": "Zadej poloměr (v jednotkách), ve kterém se mají vyléčit hráči poblíž.",
+                    "dialog_error": "Neplatný poloměr. Musí být mezi 1 a 500.",
+                    "success": "Hráči v zadaném poloměru byli vyléčeni."
                 }
             },
             "announcement": {
@@ -225,11 +238,11 @@
                 "zero_players": "Žádní hráči nenalezeni"
             },
             "filter": {
-                "label": "Filter by",
-                "no_filter": "No Filter",
-                "is_admin": "Is Admin",
-                "is_injured": "Is Injured / Dead",
-                "in_vehicle": "In Vehicle"
+                "label": "Filtrovat podle",
+                "no_filter": "Bez filtru",
+                "is_admin": "Je admin",
+                "is_injured": "Je zraněný / mrtvý",
+                "in_vehicle": "Je ve vozidle"
             },
             "sort": {
                 "label": "Seřadit podle",
@@ -306,7 +319,7 @@
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "Srandičky",
                     "options": {
                         "drunk": "Udělat opilým",
                         "fire": "Zapálit",
@@ -324,7 +337,7 @@
                 "btn_wl_add": "PŘIDAT WL",
                 "btn_wl_remove": "ODEBRAT WL",
                 "btn_wl_success": "Stav whitelistu byl změněn.",
-                "log_label": "Log",
+                "log_label": "Záznam",
                 "log_empty": "Žádné bany, či varování.",
                 "log_ban_count": "%{smart_count} ban |||| %{smart_count} bany",
                 "log_warn_count": "%{smart_count} varování |||| %{smart_count} varování",
