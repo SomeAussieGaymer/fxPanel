@@ -114,6 +114,13 @@ export const registeredPermissions: PermissionDefinition[] = [
         description: 'View FXServer log output.',
         category: 'server',
     },
+    {
+        id: 'server.code.editor',
+        label: 'Resource Code Editor',
+        description: 'Browse and edit files inside the resources directory.',
+        category: 'server',
+        dangerous: true,
+    },
 
     // ── In-Game Menu ──
     {

@@ -16,6 +16,5 @@
             "@locale/*": ["../locale/*"]
         }
     },
-    "include": ["**/*", "../locale/*.json"],
-    "references": [{ "path": "../core" }]
+    "include": ["**/*", "../locale/*.json"]
 }
