@@ -1,11 +1,13 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBackendApi } from '@/hooks/fetch';
 import { txToast } from '@/components/TxToaster';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Loader2Icon, WrenchIcon } from 'lucide-react';
 import useSWR from 'swr';
 import { PageHeader } from '@/components/page-header';
+import { DEV_MOCK_STATUS_STORAGE_KEY } from '@/lib/devFlags';
 
 type AdvancedDataResp = {
     verbosityEnabled: boolean;
@@ -22,6 +24,19 @@ export default function AdvancedPage() {
     const magicInputRef = useRef<HTMLInputElement>(null);
     const [magicOutput, setMagicOutput] = useState('What will happen when its pressed?!');
     const [isRunning, setIsRunning] = useState(false);
+    const [devMockStatusEnabled, setDevMockStatusEnabled] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return window.localStorage.getItem(DEV_MOCK_STATUS_STORAGE_KEY) === '1';
+    });
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        if (devMockStatusEnabled) {
+            window.localStorage.setItem(DEV_MOCK_STATUS_STORAGE_KEY, '1');
+        } else {
+            window.localStorage.removeItem(DEV_MOCK_STATUS_STORAGE_KEY);
+        }
+    }, [devMockStatusEnabled]);
 
     const dataApi = useBackendApi<AdvancedDataResp>({
         method: 'GET',
@@ -97,6 +112,27 @@ export default function AdvancedPage() {
                 <div className="border-destructive/30 rounded-lg border p-4">
                     <h2 className="mb-4 text-lg font-bold">Random buttons, knobs and data:</h2>
                     <div className="space-y-4 text-center">
+                        {/* Dev mock status toggle */}
+                        <div>
+                            <p className="text-muted-foreground text-sm">
+                                Use mock Socket status data on the panel (development only).
+                                <br />
+                                Reload the page after changing this toggle.
+                            </p>
+                            <div className="mt-2 flex items-center justify-center gap-3">
+                                <Switch
+                                    checked={devMockStatusEnabled}
+                                    onCheckedChange={setDevMockStatusEnabled}
+                                    aria-label="Enable mock status data"
+                                />
+                                <span className="text-sm font-medium">
+                                    Mock status: {devMockStatusEnabled ? 'Enabled' : 'Disabled'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr className="border-border" />
+
                         {/* Verbosity toggle */}
                         <div>
                             <p className="text-muted-foreground text-sm">

@@ -9,6 +9,7 @@ import { useAuthedFetcher } from '@/hooks/fetch';
 import { LogoutReasonHash } from '@/pages/auth/Login';
 import { createMockGlobalStatus, createMockPlayerlistEvents } from '@/pages/Dashboard/devMockData';
 import type { GlobalStatusType } from '@shared/socketioTypes';
+import { isDevMockStatusOptInEnabled, DEV_MOCK_STATUS_STORAGE_KEY } from '@/lib/devFlags';
 
 /**
  * Responsible for starting and handling the main socket.io connection
@@ -33,7 +34,7 @@ export default function MainSocket() {
     useEffect(() => {
         //SocketIO - singleton, rooms passed via query on first connect
         const socket = getSocket();
-        const isDevMockMode = import.meta.env.DEV;
+        const isDevMockMode = import.meta.env.DEV && isDevMockStatusOptInEnabled();
         let latestLiveStatus: GlobalStatusType | null = null;
         let devMockInterval: ReturnType<typeof setInterval> | undefined;
 
@@ -45,6 +46,10 @@ export default function MainSocket() {
                 '%c[DEV MOCK MODE ACTIVE]%c Using createMockGlobalStatus / createMockPlayerlistEvents instead of live socket data.',
                 'background:#b91c1c;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px;',
                 'color:inherit;',
+            );
+        } else if (import.meta.env.DEV) {
+            console.info(
+                `[DEV MOCK MODE OFF] Using live socket status. To enable mock status, set ?devMockStatus=1 or localStorage["${DEV_MOCK_STATUS_STORAGE_KEY}"] = "1".`,
             );
         }
 

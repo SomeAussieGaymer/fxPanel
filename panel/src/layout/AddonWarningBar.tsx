@@ -119,7 +119,7 @@ function AddonWarningBarInner() {
                             className="border-current hover:bg-white/10"
                             onClick={() => {
                                 window.location.hash = 'addons';
-                                navigate('/settings#addons');
+                                navigate('/addons');
                             }}
                         >
                             <PackageIcon className="mr-1 h-[0.9rem]" /> Go to Addons

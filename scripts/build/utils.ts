@@ -55,16 +55,33 @@ export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
 
 /**
  * Processes a fxserver path to validate it as well as the monitor folder.
- * NOTE: this function is windows only, but could be easily adapted.
+ *
+ * Supports Windows, Linux, and macOS hosts. The fxserver binary is detected by
+ * looking for any of `FXServer.exe`, `FXServer`, or `run.sh` (the wrapper that
+ * ships with the Linux artifact). When `allowMissingBin` is true (e.g. when
+ * `TXDEV_NO_SPAWN` is set, such as on macOS or against a Dockerized server),
+ * the binary check is skipped entirely so a bare `citizen/system_resources/...`
+ * mount is enough.
  */
-export const getFxsPaths = (fxserverPath: string) => {
+export const getFxsPaths = (fxserverPath: string, allowMissingBin = false) => {
     const root = path.normalize(fxserverPath);
 
-    //Process fxserver path
-    const bin = path.join(root, 'FXServer.exe');
-    const binStat = fs.statSync(bin);
-    if (!binStat.isFile()) {
-        throw new Error(`${bin} is not a file.`);
+    //Process fxserver path - try common binary names across platforms
+    const binCandidates = ['FXServer.exe', 'FXServer', 'run.sh'];
+    let bin: string | null = null;
+    for (const candidate of binCandidates) {
+        const candidatePath = path.join(root, candidate);
+        if (fs.existsSync(candidatePath) && fs.statSync(candidatePath).isFile()) {
+            bin = candidatePath;
+            break;
+        }
+    }
+    if (!bin && !allowMissingBin) {
+        throw new Error(
+            `No FXServer binary found in ${root}. ` +
+                `Tried: ${binCandidates.join(', ')}. ` +
+                `If you're targeting a remote/Dockerized server, set TXDEV_NO_SPAWN=1.`,
+        );
     }
 
     //Process monitor path
@@ -74,7 +91,7 @@ export const getFxsPaths = (fxserverPath: string) => {
         throw new Error(`${monitor} is not a directory.`);
     }
 
-    return { root, bin, monitor };
+    return { root, bin: bin ?? '', monitor };
 };
 
 /**

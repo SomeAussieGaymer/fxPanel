@@ -385,8 +385,16 @@ export default function AddonsPage() {
             const resp = await fetcher(`/addons/${addonId}/revoke`, { method: 'POST' });
             if (resp.error) {
                 txToast.error(resp.error);
+            } else if (resp.warning) {
+                txToast.warning(resp.warning);
+                resetAddonCache();
+                mutate();
+            } else if (resp.stoppedNow === false) {
+                txToast.warning('Addon revoked. Restart FXServer to fully unload the running instance.');
+                resetAddonCache();
+                mutate();
             } else {
-                txToast.success('Addon revoked and stopped.');
+                txToast.success('Addon revoked.');
                 resetAddonCache();
                 mutate();
             }
@@ -402,6 +410,10 @@ export default function AddonsPage() {
             const resp = await fetcher(`/addons/${addonId}/reload`, { method: 'POST' });
             if (resp.error) {
                 txToast.error(`Reload failed: ${resp.error}`);
+            } else if (resp.warning) {
+                txToast.warning(resp.warning);
+                resetAddonCache();
+                mutate();
             } else {
                 txToast.success(`Addon "${addonId}" reloaded.`);
                 resetAddonCache();
@@ -423,6 +435,14 @@ export default function AddonsPage() {
             const resp = await fetcher(`/addons/${addonId}/stop`, { method: 'POST' });
             if (resp.error) {
                 txToast.error(`Stop failed: ${resp.error}`);
+            } else if (resp.warning) {
+                txToast.warning(resp.warning);
+                resetAddonCache();
+                mutate();
+            } else if (resp.stoppedNow === false) {
+                txToast.warning(`Addon "${addonId}" stop is pending restart.`);
+                resetAddonCache();
+                mutate();
             } else {
                 txToast.success(`Addon "${addonId}" stopped.`);
                 resetAddonCache();

@@ -115,7 +115,7 @@ export default function MainShell() {
                         <div ref={containerRef} className="flex flex-1 overflow-auto">
                             <div
                                 ref={contentRef}
-                                className="flex min-h-full w-full max-w-[1920px] flex-col px-3 pt-(--page-pt) pb-(--page-pb) md:px-5 2xl:px-8"
+                                className="flex min-h-full w-full max-w-[160rem] flex-col px-3 pt-(--page-pt) pb-(--page-pb) md:px-5 2xl:px-8"
                             >
                                 {pageHeader}
                                 <div className="flex w-full flex-1 flex-row gap-4">

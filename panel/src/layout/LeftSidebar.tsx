@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from 'react';
 import { useRoute } from 'wouter';
 import MainPageLink from '@/components/MainPageLink';
 import { useAdminPerms, useAuth } from '@/hooks/auth';
-import { serverNameAtom, fxRunnerStateAtom, txConfigStateAtom } from '@/hooks/status';
+import { serverNameAtom, fxRunnerStateAtom, txConfigStateAtom, useGlobalStatus } from '@/hooks/status';
 import { playerCountAtom } from '@/hooks/playerlist';
 import { useAtomValue } from 'jotai';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -31,14 +31,18 @@ import {
     FileCodeIcon,
     PackageIcon,
     ScrollTextIcon,
+    ChevronDownIcon,
     ChevronLeftIcon,
+    ChevronUpIcon,
+    MegaphoneIcon,
     BlocksIcon,
     WrenchIcon,
+    XCircleIcon,
 } from 'lucide-react';
 import { LogoFullSquareGreen } from '@/components/Logos';
 import { NavLink } from '@/components/MainPageLink';
 import { TxConfigState } from '@shared/enums';
-import { useOpenConfirmDialog } from '@/hooks/dialogs';
+import { useOpenConfirmDialog, useOpenPromptDialog, useAccountModal } from '@/hooks/dialogs';
 import { ApiTimeout, useBackendApi } from '@/hooks/fetch';
 import { useCloseAllSheets } from '@/hooks/sheets';
 import { useAddonLoader } from '@/hooks/addons';
@@ -52,7 +56,9 @@ import {
 import { FaDiscord } from 'react-icons/fa';
 import { openExternalLink } from '@/lib/navigation';
 import Avatar from '@/components/Avatar';
-import { useAccountModal } from '@/hooks/dialogs';
+import { txToast } from '@/components/TxToaster';
+import { msToShortDuration } from '@/lib/dateTime';
+import { KickAllIcon } from '@/components/KickIcons';
 
 // ─── Collapse context ─────────────────────────────────────────────────────────
 const SidebarCollapsedCtx = createContext(false);
@@ -146,6 +152,30 @@ function SidebarSection({ label, children }: { label: string; children: React.Re
         </div>
     );
 }
+
+const validateSidebarScheduleInput = (input: string) => {
+    if (input.startsWith('+')) {
+        const minutes = parseInt(input.substring(1));
+        if (isNaN(minutes) || minutes < 1 || minutes >= 1440) {
+            return false;
+        }
+    } else {
+        const [hours, minutes] = input.split(':', 2).map((x) => parseInt(x));
+        if (
+            typeof hours === 'undefined' ||
+            isNaN(hours) ||
+            hours < 0 ||
+            hours > 23 ||
+            typeof minutes === 'undefined' ||
+            isNaN(minutes) ||
+            minutes < 0 ||
+            minutes > 59
+        ) {
+            return false;
+        }
+    }
+    return true;
+};
 
 // ─── Sidebar server controls (labeled buttons) ───────────────────────────────
 function SidebarServerControls() {
@@ -253,13 +283,217 @@ function SidebarServerControls() {
     );
 }
 
+function SidebarServerExtraActions() {
+    const fxRunnerState = useAtomValue(fxRunnerStateAtom);
+    const status = useGlobalStatus();
+    const { hasPerm } = useAdminPerms();
+    const openPromptDialog = useOpenPromptDialog();
+    const closeAllSheets = useCloseAllSheets();
+    const schedulerApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/schedule',
+    });
+    const fxsCommandsApi = useBackendApi({
+        method: 'POST',
+        path: '/fxserver/commands',
+    });
+
+    let nextScheduledText = 'none';
+    let nextScheduledClasses = 'text-muted-foreground/75';
+    let disableAddEditBtn = false;
+    let isRestartSkipped = false;
+    const hasScheduledRestart = typeof status?.scheduler.nextRelativeMs === 'number';
+    if (hasScheduledRestart && status) {
+        const relativeTime = msToShortDuration(status.scheduler.nextRelativeMs, { units: ['h', 'm'], delimiter: ' ' });
+        const isLessThanMinute = status.scheduler.nextRelativeMs < 60_000;
+        if (status.scheduler.nextSkip) {
+            nextScheduledClasses = 'text-muted-foreground line-through';
+            isRestartSkipped = true;
+            nextScheduledText = 'skipped';
+        } else {
+            if (isLessThanMinute) {
+                disableAddEditBtn = true;
+                nextScheduledText = 'now';
+            } else {
+                nextScheduledText = relativeTime;
+            }
+            nextScheduledClasses = status.scheduler.nextIsTemp ? 'text-info-inline' : 'text-warning-inline';
+        }
+    }
+
+    const onScheduleSubmit = (input: string) => {
+        closeAllSheets();
+        if (input.includes(',')) {
+            txToast.error(
+                {
+                    title: 'Invalid scheduled restart time.',
+                    msg: 'This field only accepts one restart time (for example +15 or 23:30).',
+                },
+                { duration: 9000 },
+            );
+            return;
+        }
+        if (!validateSidebarScheduleInput(input)) {
+            txToast.error(`Invalid schedule time: ${input}`);
+            return;
+        }
+        schedulerApi({
+            data: { action: 'setNextTempSchedule', parameter: input },
+            toastLoadingMessage: 'Scheduling server restart...',
+        });
+    };
+
+    const handleSchedule = () => {
+        openPromptDialog({
+            suggestions: ['+5', '+10', '+15', '+30'],
+            title: 'When should the server restart?',
+            message: 'Use +MM for relative minutes, or HH:MM for absolute server time.',
+            placeholder: '+15',
+            required: true,
+            submitLabel: hasScheduledRestart ? 'Edit' : 'Schedule',
+            onSubmit: onScheduleSubmit,
+        });
+    };
+
+    const handleCancelRestart = () => {
+        closeAllSheets();
+        schedulerApi({
+            data: { action: 'setNextSkip', parameter: true },
+            toastLoadingMessage: 'Cancelling next server restart...',
+        });
+    };
+
+    const handleAnnounce = () => {
+        if (!fxRunnerState.isChildAlive) return;
+        openPromptDialog({
+            title: 'Send Announcement',
+            message: 'Type the message to broadcast to all players.',
+            placeholder: 'announcement message',
+            submitLabel: 'Send',
+            required: true,
+            onSubmit: (input) => {
+                closeAllSheets();
+                fxsCommandsApi({
+                    data: { action: 'admin_broadcast', parameter: input },
+                    toastLoadingMessage: 'Sending announcement...',
+                });
+            },
+        });
+    };
+
+    const handleKickAll = () => {
+        if (!fxRunnerState.isChildAlive) return;
+        openPromptDialog({
+            title: 'Kick All Players',
+            message: 'Type the kick reason or leave it blank (press enter).',
+            placeholder: 'kick reason',
+            submitLabel: 'Send',
+            onSubmit: (input) => {
+                closeAllSheets();
+                fxsCommandsApi({
+                    data: { action: 'kick_all', parameter: input },
+                    toastLoadingMessage: 'Kicking players...',
+                });
+            },
+        });
+    };
+
+    const hasControlPerm = hasPerm('control.server');
+    const hasAnnouncementPerm = hasPerm('announcement');
+    const canAdjustRestart = hasControlPerm && !disableAddEditBtn;
+    const canCancelRestart = hasControlPerm && hasScheduledRestart && !disableAddEditBtn && !isRestartSkipped;
+    const cancelLabel = !hasScheduledRestart
+        ? 'No restart to cancel'
+        : isRestartSkipped
+            ? 'Restart already cancelled'
+            : 'Cancel next restart';
+    const iconBtnClass =
+        'flex h-8 w-8 items-center justify-center rounded-md border border-border/50 bg-background/35 text-muted-foreground transition-colors hover:bg-secondary/55 hover:text-foreground disabled:pointer-events-none disabled:opacity-40';
+    const adjustLabel = hasScheduledRestart ? 'Adjust restart time' : 'Set restart time';
+
+    return (
+        <div className="mt-2 rounded-lg border border-border/40 bg-black/10 p-2.5">
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+                <p className="text-[10px] font-semibold whitespace-nowrap text-muted-foreground/75">Quick actions</p>
+                <span
+                    className={cn(
+                        'flex h-7 items-center justify-center rounded-md border border-border/50 bg-background/30 px-1.5 text-[10px] font-semibold whitespace-nowrap',
+                        nextScheduledClasses,
+                    )}
+                >
+                    {nextScheduledText}
+                </span>
+            </div>
+            <div className="grid grid-cols-4 gap-1.5">
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
+                            onClick={handleAnnounce}
+                            className={cn(iconBtnClass, 'border-primary/35 text-primary')}
+                            disabled={!hasAnnouncementPerm || !fxRunnerState.isChildAlive}
+                            aria-label="Send announcement"
+                        >
+                            <MegaphoneIcon className="h-3.5 w-3.5" />
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Send announcement</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
+                            onClick={handleKickAll}
+                            className={cn(iconBtnClass, 'border-warning/35 text-warning-inline')}
+                            disabled={!hasControlPerm || !fxRunnerState.isChildAlive}
+                            aria-label="Kick all players"
+                        >
+                            <KickAllIcon style={{ height: '0.9rem', width: '0.9rem', fill: 'currentcolor' }} />
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">Kick all players</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
+                            onClick={handleSchedule}
+                            className={cn(iconBtnClass, 'border-info/35 text-info-inline')}
+                            disabled={!canAdjustRestart}
+                            aria-label={adjustLabel}
+                        >
+                            <SlidersHorizontalIcon className="h-3.5 w-3.5" />
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{adjustLabel}</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <button
+                            onClick={handleCancelRestart}
+                            className={cn(iconBtnClass, 'border-destructive/35 text-destructive-inline hover:bg-destructive/10')}
+                            disabled={!canCancelRestart}
+                            aria-label={cancelLabel}
+                        >
+                            <XCircleIcon className="h-3.5 w-3.5" />
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">{cancelLabel}</TooltipContent>
+                </Tooltip>
+            </div>
+        </div>
+    );
+}
+
 // ─── Bottom server status card ────────────────────────────────────────────────
 function ServerStatusCard() {
     const serverName = useAtomValue(serverNameAtom);
     const playerCount = useAtomValue(playerCountAtom);
     const fxRunnerState = useAtomValue(fxRunnerStateAtom);
+    const txConfigState = useAtomValue(txConfigStateAtom);
     const isOnline = fxRunnerState.isChildAlive;
     const collapsed = useCollapsed();
+    const [showExtraActions, setShowExtraActions] = useState(false);
 
     if (collapsed) {
         return (
@@ -297,6 +531,20 @@ function ServerStatusCard() {
                 </div>
             </div>
             <SidebarServerControls />
+            {txConfigState === TxConfigState.Ready && (
+                <>
+                    <button
+                        type="button"
+                        onClick={() => setShowExtraActions((v) => !v)}
+                        className="mt-2 flex w-full items-center justify-between rounded-md border border-border/40 bg-background/30 px-2 py-1.5 text-[11px] text-muted-foreground transition-colors hover:bg-secondary/40 hover:text-foreground"
+                        aria-expanded={showExtraActions}
+                    >
+                        <span>{showExtraActions ? 'Hide extra actions' : 'More actions'}</span>
+                        {showExtraActions ? <ChevronUpIcon className="h-3.5 w-3.5" /> : <ChevronDownIcon className="h-3.5 w-3.5" />}
+                    </button>
+                    {showExtraActions && <SidebarServerExtraActions />}
+                </>
+            )}
         </div>
     );
 }

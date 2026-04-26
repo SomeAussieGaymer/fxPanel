@@ -20,11 +20,23 @@ if (!txDevEnv.FXSERVER_PATH || !txDevEnv.VITE_URL) {
     process.exit(1);
 }
 
+//Auto-enable NO_SPAWN on platforms where FXServer can't run natively (macOS).
+//Users on Windows/Linux can still opt-in explicitly via TXDEV_NO_SPAWN=1, e.g.
+//when targeting a remote / Dockerized FXServer.
+const noSpawn = txDevEnv.NO_SPAWN || process.platform === 'darwin';
+if (noSpawn) {
+    if (process.platform === 'darwin' && !txDevEnv.NO_SPAWN) {
+        console.log('[BUILDER] Detected macOS host - running in watch-only mode (no FXServer spawn).');
+    } else {
+        console.log('[BUILDER] TXDEV_NO_SPAWN set - running in watch-only mode (no FXServer spawn).');
+    }
+}
+
 //Setup
 const { txVersion, preReleaseExpiration } = getPublishVersion(true);
 let fxsPaths: ReturnType<typeof getFxsPaths>;
 try {
-    fxsPaths = getFxsPaths(txDevEnv.FXSERVER_PATH!);
+    fxsPaths = getFxsPaths(txDevEnv.FXSERVER_PATH!, noSpawn);
 } catch (error) {
     console.error('[BUILDER] Could not extract/validate the fxserver and monitor paths.');
     console.error(error);
@@ -74,11 +86,16 @@ const txInstance = new TxAdminRunner(fxsPaths.root, fxsPaths.bin, txDevEnv);
 process.stdin.on('data', (data) => {
     const cmd = data.toString().toLowerCase().trim();
     if (cmd === 'r' || cmd === 'rr') {
+        if (noSpawn) {
+            console.log('[BUILDER] Watch-only mode: restart your FXServer manually.');
+            return;
+        }
         txInstance.removeRebootPause();
         console.log(`[BUILDER] Restarting due to stdin request.`);
         txInstance.killServer();
         txInstance.spawnServer();
     } else if (cmd === 'p' || cmd === 'pause') {
+        if (noSpawn) return;
         txInstance.toggleRebootPause();
     } else if (cmd === 'cls' || cmd === 'clear') {
         console.clear();
@@ -106,14 +123,14 @@ const plugins: BuildOptions['plugins'] = [
         setup(build) {
             build.onStart(() => {
                 console.log(`[BUILDER] Build started.`);
-                txInstance.killServer();
+                if (!noSpawn) txInstance.killServer();
             });
             build.onEnd(({ errors }) => {
                 if (errors.length) {
                     console.log(`[BUILDER] Failed with errors.`);
                 } else {
                     console.log('[BUILDER] Finished build.');
-                    txInstance.spawnServer();
+                    if (!noSpawn) txInstance.spawnServer();
                 }
             });
         },

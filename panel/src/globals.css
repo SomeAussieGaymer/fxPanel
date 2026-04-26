@@ -101,7 +101,7 @@
         @apply border-border;
     }
     html {
-        font-size: 12px;
+        font-size: clamp(12px, calc(8px + 0.21vw), 16px);
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: hsl(var(--secondary)) hsl(var(--background));
