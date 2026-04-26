@@ -170,6 +170,11 @@ export default () => {
     router.get('/cfgEditor/files', apiAuthMw, routes.cfgEditor_listFiles);
     router.post('/cfgEditor/save', apiAuthMw, routes.cfgEditor_save);
 
+    //File Manager
+    router.get('/fileManager/list', apiAuthMw, routes.fileManager_list);
+    router.get('/fileManager/read', apiAuthMw, routes.fileManager_read);
+    router.post('/fileManager/save', apiAuthMw, mutationLimiter, routes.fileManager_save);
+
     //Resources
     router.get('/resources/list', apiAuthMw, wrapRoute('ResourcesList', routes.resources_list));
 

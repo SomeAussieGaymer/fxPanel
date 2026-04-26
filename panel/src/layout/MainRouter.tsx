@@ -33,6 +33,7 @@ import MasterActionsPage from '@/pages/MasterActionsPage';
 import CfgEditorPage from '@/pages/CfgEditorPage';
 import SetupPage from '@/pages/SetupPage';
 import DeployerPage from '@/pages/DeployerPage';
+import CodePage from '@/pages/CodePage';
 import { useAdminPerms } from '@/hooks/auth';
 import { useAddonLoader, type AddonPageRoute } from '@/hooks/addons';
 import UnauthorizedPage from '@/pages/UnauthorizedPage';
@@ -159,6 +160,12 @@ const allRoutes: RouteType[] = [
         title: 'CFG Editor',
         permission: 'server.cfg.editor',
         Page: <CfgEditorPage />,
+    },
+    {
+        path: '/server/code',
+        title: 'Code Editor',
+        permission: 'server.code.editor',
+        Page: <CodePage />,
     },
     {
         path: '/server/setup',

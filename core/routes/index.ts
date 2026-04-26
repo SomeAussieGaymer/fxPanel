@@ -5,9 +5,22 @@ export { default as resources } from './resources';
 export { default as resources_list } from './resources/list';
 export { default as perfChart } from './perfChart';
 export { default as playerDrops } from './playerDrops';
-export { systemLogPartial, systemLogSessions, systemLogSessionFile, systemLogScoped } from './logs/system';
-export { serverLogPartial, serverLogSessions, serverLogSessionFile } from './logs/server';
-export { downloadFxserverLog, downloadServerLog, downloadSystemLog } from './logs/download';
+export { default as systemLogPartial } from './systemLogPartial';
+export { systemLogSessions, systemLogSessionFile } from './systemLogSessions';
+export { default as systemLogScoped } from './systemLogs';
+ 
+export {
+    serverLogPartial,
+    serverLogSessions,
+    serverLogSessionFile,
+    downloadFxserverLog,
+    downloadServerLog,
+    downloadSystemLog,
+} from './stubs';
+ 
+export { default as fileManager_list } from './fileManager/list';
+export { default as fileManager_read } from './fileManager/read';
+export { default as fileManager_save } from './fileManager/save';
 
 export { default as auth_addMasterPin } from './authentication/addMasterPin.js';
 export { default as auth_addMasterCallback } from './authentication/addMasterCallback.js';

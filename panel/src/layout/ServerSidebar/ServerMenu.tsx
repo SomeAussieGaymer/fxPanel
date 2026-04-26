@@ -13,6 +13,7 @@ import {
     ChevronRightSquareIcon,
     DnaIcon,
     EyeIcon,
+    FileCodeIcon,
     FileEditIcon,
     HourglassIcon,
     LayoutDashboardIcon,
@@ -111,6 +112,10 @@ export default function ServerMenu() {
                     <MenuNavLink href="/server/server-log" disabled={!hasPerm('server.log.view')}>
                         <EyeIcon className="mr-2 h-4 w-4" />
                         Server Log
+                    </MenuNavLink>
+                    <MenuNavLink href="/server/code" disabled={!hasPerm('server.code.editor')}>
+                        <FileCodeIcon className="mr-2 h-4 w-4" />
+                        Code
                     </MenuNavLink>
                     <MenuNavLink href="/server/cfg-editor" disabled={!hasPerm('server.cfg.editor')}>
                         <FileEditIcon className="mr-2 h-4 w-4" />
